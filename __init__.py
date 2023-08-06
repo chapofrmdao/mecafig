@@ -1,33 +1,20 @@
-bl_info = {
-    'name': 'MecaFig',
-    'description': 'A ready shaded and rigged LEGO® MiniFigurine for your renders and animations!',
-    'author': 'Bruno Ducloy',
-    'version': (2019, 1, 2),
-    'blender': (2, 80, 75),
-    'location': '3D View > Properties (N) > MecaFig',
-    'warning': '',
-    'wiki_url': '',
-    'category': '3D View'
-}
-
+import os
 import bpy
+import bpy.utils.previews
 
-from .icons.__init__ import *
-from .operators.__init__ import *
-from .properties.__init__ import *
-from .ui.__init__ import *
+mecafig_icons = {}
+icons_directory = os.path.dirname(__file__)
 
-def register():
-    register_icons()
-    register_properties()
-    register_operators()
-    register_ui()
+def get_icon(icon):
+    if icon not in mecafig_icons['main']:
+        mecafig_icons['main'].load(icon, os.path.join(icons_directory, icon + '.png'), 'IMAGE')
+    return mecafig_icons['main'][icon].icon_id
 
-def unregister():
-    unregister_ui()
-    unregister_operators()
-    unregister_properties()
-    unregister_icons()
+def register_icons():
+    #global mecafig_icons
+    mecafig_icons['main'] = bpy.utils.previews.new()
 
-if __name__ == '__main__':
-    register()
+def unregister_icons():
+    for pcoll in mecafig_icons.values():
+        bpy.utils.previews.remove(pcoll)
+    mecafig_icons.clear()
